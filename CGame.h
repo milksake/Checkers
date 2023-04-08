@@ -9,6 +9,14 @@ struct Input
 	Vector2 pos;
 };
 
+struct Color
+{
+	float r, g, b, a;
+	static const Color Black;
+	static const Color White;
+	static const Color AlphaGrey;
+};
+
 void mouseCallback(GLFWwindow* window, int button, int action, int mods);
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
@@ -43,15 +51,19 @@ public:
 	Vector2 getMouseLocation();
 
 	// Helper functions
-	void drawLine(const Vector2& a, const Vector2& b);
-	void drawLines(std::vector<Vector2> points);
-	void drawContLines(std::vector<Vector2> points);
-	void drawRects(std::vector<Vector2> points);
+	void drawLine(const Vector2& a, const Vector2& b, Color color = Color::White);
+	void drawLines(const std::vector<Vector2>& points, Color color = Color::White);
+	void drawContLines(const std::vector<Vector2>& points, Color color = Color::White);
+	void drawRects(const std::vector<Vector2>& points, Color color = Color::White);
+	void drawCircle(const Vector2& pos, const Vector2& length, Color color = Color::White);
+	void drawHollowCircle(const Vector2& pos, const Vector2& length, Color color = Color::White);
 };
 
 template<typename T>
 inline void CGame::changeScene()
 {
+	currentScene->end();
 	delete currentScene;
 	currentScene = new T;
+	currentScene->begin();
 }

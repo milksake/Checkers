@@ -4,7 +4,8 @@
 int main()
 {
 	CGame game;
-	game.init(1000, 500);
+	if (!game.init(1000, 700))
+		return -1;
 	game.run();
 	return 0;
 }

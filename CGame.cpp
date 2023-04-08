@@ -1,5 +1,10 @@
 #include "CGame.h"
 #include "Vector2.h"
+#include "CCheckers.h"
+
+const struct Color Color::Black = { 0, 0, 0, 0 };
+const struct Color Color::White = { 1, 1, 1, 1 };
+const struct Color Color::AlphaGrey = { 0.5f, 0.5f, 0.5f, 0.5f };
 
 void mouseCallback(GLFWwindow* window, int button, int action, int mods)
 {
@@ -19,9 +24,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 
 CGame::CGame(int frameT) :
     frame_time(frameT), current_frame(0), frame_count(frameT)
-{
-    currentScene = new CMenu(this);
-}
+{}
 
 bool CGame::init(int windowW, int windowH)
 {
@@ -32,7 +35,7 @@ bool CGame::init(int windowW, int windowH)
     /* Create a windowed mode window and its OpenGL context */
     wWidth = windowW;
     wHeight = windowH;
-    window = glfwCreateWindow(windowW, windowH, "OpenGL", NULL, NULL);
+    window = glfwCreateWindow(windowW, windowH, "Checkers", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -42,11 +45,18 @@ bool CGame::init(int windowW, int windowH)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
-    /* Extra configurations*/
+    /* Extra configurations */
     glClearColor(0, 0, 0, 1);
     glfwSetWindowUserPointer(window, this);
     glfwSetKeyCallback(window, keyCallback);
     glfwSetMouseButtonCallback(window, mouseCallback);
+    // Enable blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    /* Initialize first scene */
+    currentScene = new CCheckers(this);
+    currentScene->begin();
 
     return true;
 }
@@ -96,9 +106,10 @@ Vector2 CGame::getMouseLocation()
     return Vector2(x, y);
 }
 
-void CGame::drawLine(const Vector2& a, const Vector2& b)
+void CGame::drawLine(const Vector2& a, const Vector2& b, Color color)
 {
     glBegin(GL_LINES);
+        glColor4f(color.r, color.g, color.b, color.a);
         auto _a = a.toOpenGlCoor(this);
         auto _b = b.toOpenGlCoor(this);
         glVertex2f(_a.x, _a.y);
@@ -106,9 +117,10 @@ void CGame::drawLine(const Vector2& a, const Vector2& b)
     glEnd();
 }
 
-void CGame::drawLines(std::vector<Vector2> points)
+void CGame::drawLines(const std::vector<Vector2>& points, Color color)
 {
     glBegin(GL_LINES);
+        glColor4f(color.r, color.g, color.b, color.a);
         for (int i = 0; i < points.size(); i++)
         {
             auto p = points[i].toOpenGlCoor(this);
@@ -117,9 +129,10 @@ void CGame::drawLines(std::vector<Vector2> points)
     glEnd();
 }
 
-void CGame::drawContLines(std::vector<Vector2> points)
+void CGame::drawContLines(const std::vector<Vector2>& points, Color color)
 {
     glBegin(GL_LINE_STRIP);
+        glColor4f(color.r, color.g, color.b, color.a);
         for (int i = 0; i < points.size(); i++)
         {
             auto p = points[i].toOpenGlCoor(this);
@@ -128,13 +141,58 @@ void CGame::drawContLines(std::vector<Vector2> points)
     glEnd();
 }
 
-void CGame::drawRects(std::vector<Vector2> points)
+void CGame::drawRects(const std::vector<Vector2>& points, Color color)
 {
     glBegin(GL_QUADS);
+        glColor4f(color.r, color.g, color.b, color.a);
         for (int i = 0; i < points.size(); i++)
         {
             auto p = points[i].toOpenGlCoor(this);
             glVertex2f(p.x, p.y);
+        }
+    glEnd();
+}
+
+void CGame::drawCircle(const Vector2& pos, const Vector2& length, Color color)
+{
+    int i;
+    int triangleAmount = 30; //# of triangles used to draw circle
+
+    float twicePi = 2.0f * 3.1416f;
+    auto newPos = pos.toOpenGlCoor(this);
+    auto newLength = length / 2.0f;
+    newLength = newLength.toOpenGlCoor(this) * Vector2(1, -1) + Vector2(1, 1);
+
+    glBegin(GL_TRIANGLE_FAN);
+        glColor4f(color.r, color.g, color.b, color.a);
+        glVertex2f(newPos.x, newPos.y); // center of circle
+        for (i = 0; i <= triangleAmount; i++)
+        {
+            glVertex2f(
+                newPos.x + (newLength.x * cos(i * twicePi / triangleAmount)),
+                newPos.y + (newLength.y * sin(i * twicePi / triangleAmount))
+            );
+        }
+    glEnd();
+}
+
+void CGame::drawHollowCircle(const Vector2& pos, const Vector2& length, Color color)
+{
+    int i;
+    int lineAmount = 30; //# of triangles used to draw circle
+
+    float twicePi = 2.0f * 3.1416f;
+    auto newPos = pos.toOpenGlCoor(this);
+    auto newLength = length / 2.0f;
+    newLength = newLength.toOpenGlCoor(this) * Vector2(1, -1) + Vector2(1, 1);
+
+    glBegin(GL_LINE_LOOP);
+        glColor4f(color.r, color.g, color.b, color.a);
+        for (i = 0; i <= lineAmount; i++) {
+            glVertex2f(
+                newPos.x + (newLength.x * cos(i * twicePi / lineAmount)),
+                newPos.y + (newLength.y * sin(i * twicePi / lineAmount))
+            );
         }
     glEnd();
 }
