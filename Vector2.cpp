@@ -39,6 +39,11 @@ Vector2 Vector2::toPixelCoor(const CGame* const game) const
 	return toOpenGlCoor(game->getWidth(), game->getHeight());
 }
 
+Vector2 Vector2::abs()
+{
+	return Vector2(std::abs(x), std::abs(y));
+}
+
 float Vector2::eucliDist(const Vector2& rhsVector) const
 {
 	Vector2 distanceVector = rhsVector - *(this);
@@ -47,8 +52,8 @@ float Vector2::eucliDist(const Vector2& rhsVector) const
 
 bool Vector2::checkRange(const Vector2& a, const Vector2& b)
 {
-	return std::min(a.x, b.x) < x && x < std::max(a.x, b.x) &&
-		std::min(a.y, b.y) < y && y < std::max(a.y, b.y);
+	return std::min(a.x, b.x) <= x && x <= std::max(a.x, b.x) &&
+		std::min(a.y, b.y) <= y && y <= std::max(a.y, b.y);
 }
 
 bool Vector2::operator==(const Vector2& rhsVector) const

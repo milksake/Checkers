@@ -19,6 +19,8 @@ public:
 	Vector2  toOpenGlCoor(const CGame* const game) const;
 	Vector2  toPixelCoor(const CGame* const game) const;
 
+	Vector2  abs();
+
 	float eucliDist(const Vector2& rhsVector) const;
 
 	bool checkRange(const Vector2& a, const Vector2& b);

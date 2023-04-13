@@ -4,7 +4,11 @@
 
 const struct Color Color::Black = { 0, 0, 0, 0 };
 const struct Color Color::White = { 1, 1, 1, 1 };
-const struct Color Color::AlphaGrey = { 0.5f, 0.5f, 0.5f, 0.5f };
+const struct Color Color::AlphaGrey = { 0.5f, 0.5f, 0.5f, 0.3f };
+const struct Color Color::Red = { 1, 0, 0, 1 };
+const struct Color Color::AlphaRed = { 1, 0, 0, 0.3 };
+const struct Color Color::Green = { 0, 1, 0, 1 };
+const struct Color Color::AlphaGreen = { 0, 1, 0, 0.3 };
 
 void mouseCallback(GLFWwindow* window, int button, int action, int mods)
 {

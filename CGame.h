@@ -15,6 +15,10 @@ struct Color
 	static const Color Black;
 	static const Color White;
 	static const Color AlphaGrey;
+	static const Color Red;
+	static const Color AlphaRed;
+	static const Color Green;
+	static const Color AlphaGreen;
 };
 
 void mouseCallback(GLFWwindow* window, int button, int action, int mods);
