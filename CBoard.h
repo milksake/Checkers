@@ -35,4 +35,10 @@ public:
 	std::vector<Vector2> possibleMoves(int x, int y, bool color) const;
 
 	void movePiece(const Vector2& from, const Vector2& to);
+
+	std::vector<Vector2> getPieces();
+	std::vector<Vector2> getPieces(bool color);
+
+	int countPieces();
+	int countPieces(bool color);
 };

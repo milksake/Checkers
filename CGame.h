@@ -43,8 +43,7 @@ public:
 	const int getHeight() const;
 	const int getWidth() const;
 
-	template<typename T>
-	void changeScene();
+	void changeScene(CScene* newScene);
 
 	// Draw
 	void beginDrawing();
@@ -62,12 +61,3 @@ public:
 	void drawCircle(const Vector2& pos, const Vector2& length, Color color = Color::White);
 	void drawHollowCircle(const Vector2& pos, const Vector2& length, Color color = Color::White);
 };
-
-template<typename T>
-inline void CGame::changeScene()
-{
-	currentScene->end();
-	delete currentScene;
-	currentScene = new T;
-	currentScene->begin();
-}

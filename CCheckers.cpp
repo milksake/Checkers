@@ -1,5 +1,6 @@
 #include "CCheckers.h"
 #include "CGame.h"
+#include <iostream>
 
 void CCheckers::drawBoard()
 {
@@ -97,11 +98,22 @@ void CCheckers::drawPiece(const Vector2& pos, bool color)
 	*/
 }
 
-CCheckers::CCheckers(CGame* const _game):
+CCheckers::CCheckers(CGame* const _game, Actor* a1, Actor* a2, bool _turn) :
 	CScene(_game), board(),
 	sep(_game->getWidth() / 10.0f, _game->getHeight() / 10.0f),
-	selectedSquare(-1, -1)
+	selectedSquare(-1, -1),
+	turn(_turn)
 {
+	a1->setScene(this);
+	a2->setScene(this);
+	actors[0] = a1;
+	actors[1] = a2;
+}
+
+CCheckers::~CCheckers()
+{
+	delete actors[0];
+	delete actors[1];
 }
 
 void CCheckers::begin()
@@ -114,36 +126,22 @@ void CCheckers::end()
 
 void CCheckers::update()
 {
-	for (auto& input : game->inputBuffer)
-	{
-		if (input.action == GLFW_PRESS && input.key == GLFW_MOUSE_BUTTON_LEFT)
-		{
-			for (int y = 0; y < 8; y++)
-				for (int x = 0; x < 8; x++)
-				{
-					auto lt = Vector2(sep.x * (x + 1), sep.y * (y + 1));
-					if (input.pos.checkRange(lt, lt + sep))
-					{
-						if (selectedSquare != Vector2(-1, -1))
-						{
-							if (std::find(highlitedSquares.begin(), highlitedSquares.end(), lt) != highlitedSquares.end())
-							{
-								board.movePiece(selectedSquare, Vector2(x, y));
-								deSelectSquare();
-							}
-						}
-						else if (board.state(Vector2(x, y)) & 0x6)
-							selectSquare(Vector2(x, y));
-					}
-				}
-		}
-		if (input.action == GLFW_PRESS && input.key == GLFW_MOUSE_BUTTON_RIGHT)
-			deSelectSquare();
-	}
+	actors[turn]->update();
 
 	game->beginDrawing();
 
 	drawBoard();
 
 	game->endDrawing();
+
+	if (board.countPieces(false) == 0)
+	{
+		std::cout << "White wins.\n";
+		game->changeScene(new CCheckers(game, new AI(true), new Player(false), false));
+	}
+	else if (board.countPieces(true) == 0)
+	{
+		std::cout << "Black wins.\n";
+		game->changeScene(new CCheckers(game, new AI(true), new Player(false), false));
+	}
 }

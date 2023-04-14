@@ -78,3 +78,39 @@ void CBoard::movePiece(const Vector2& from, const Vector2& to)
 		changeState(newV, state(newV) & (~0x2));
 	}
 }
+
+std::vector<Vector2> CBoard::getPieces()
+{
+	std::vector<Vector2> pieces;
+	for (int x = 0; x < 8; x++)
+	{
+		for (int y = 0; y < 8; y++)
+		{
+			if (state(x, y) & 0x2)
+				pieces.push_back(Vector2(x, y));
+		}
+	}
+	return pieces;
+}
+
+std::vector<Vector2> CBoard::getPieces(bool color)
+{
+	auto pieces = getPieces();
+	std::vector<Vector2> newPieces;
+	for (auto& piece : pieces)
+	{
+		if ((bool)(state(piece) & 0x4) == color)
+			newPieces.push_back(piece);
+	}
+	return newPieces;
+}
+
+int CBoard::countPieces()
+{
+	return getPieces().size();
+}
+
+int CBoard::countPieces(bool color)
+{
+	return getPieces(color).size();
+}

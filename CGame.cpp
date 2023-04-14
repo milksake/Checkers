@@ -1,6 +1,7 @@
 #include "CGame.h"
 #include "Vector2.h"
 #include "CCheckers.h"
+#include "Actor.h"
 
 const struct Color Color::Black = { 0, 0, 0, 0 };
 const struct Color Color::White = { 1, 1, 1, 1 };
@@ -59,7 +60,7 @@ bool CGame::init(int windowW, int windowH)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     /* Initialize first scene */
-    currentScene = new CCheckers(this);
+    currentScene = new CCheckers(this, new AI(false), new Player(true), false);
     currentScene->begin();
 
     return true;
@@ -89,6 +90,14 @@ const int CGame::getHeight() const
 const int CGame::getWidth() const
 {
     return wWidth;
+}
+
+void CGame::changeScene(CScene* newScene)
+{
+    currentScene->end();
+    delete currentScene;
+    currentScene = newScene;
+    currentScene->begin();
 }
 
 void CGame::beginDrawing()
