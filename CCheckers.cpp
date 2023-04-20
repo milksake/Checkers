@@ -1,5 +1,6 @@
 #include "CCheckers.h"
 #include "CGame.h"
+#include "AI.h"
 #include <iostream>
 
 void CCheckers::drawBoard()
@@ -137,11 +138,11 @@ void CCheckers::update()
 	if (board.countPieces(false) == 0)
 	{
 		std::cout << "White wins.\n";
-		game->changeScene(new CCheckers(game, new AI(true), new Player(false), false));
+		game->changeScene(new CCheckers(game, new AI(true, 3), new Player(false), false));
 	}
 	else if (board.countPieces(true) == 0)
 	{
 		std::cout << "Black wins.\n";
-		game->changeScene(new CCheckers(game, new AI(true), new Player(false), false));
+		game->changeScene(new CCheckers(game, new AI(true, 3), new Player(false), false));
 	}
 }

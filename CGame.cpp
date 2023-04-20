@@ -2,6 +2,8 @@
 #include "Vector2.h"
 #include "CCheckers.h"
 #include "Actor.h"
+#include "AI.h"
+#include <iostream>
 
 const struct Color Color::Black = { 0, 0, 0, 0 };
 const struct Color Color::White = { 1, 1, 1, 1 };
@@ -33,6 +35,17 @@ CGame::CGame(int frameT) :
 
 bool CGame::init(int windowW, int windowH)
 {
+    /* Config */
+    int d;
+    int aiType;
+    std::cout << "  - 2 Players (0)\n  - MinMax (1)\n  - AlphaBeta (2)\nChoose Mode: ";
+    std::cin >> aiType;
+    if (aiType >= 1)
+    {
+        std::cout << "Enter depth of tree: ";
+        std::cin >> d;
+    }
+
     /* Initialize the library */
     if (!glfwInit())
         return false;
@@ -60,7 +73,21 @@ bool CGame::init(int windowW, int windowH)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     /* Initialize first scene */
-    currentScene = new CCheckers(this, new AI(false), new Player(true), false);
+    Actor* actPtr;
+    switch (aiType)
+    {
+    case 1:
+        actPtr = new AI(false, d);
+        break;
+    case 2:
+        actPtr = new AlphaBeta(false, d);
+        break;
+    default:
+        actPtr = new Player(false);
+        break;
+    }
+
+    currentScene = new CCheckers(this, actPtr, new Player(true), true);
     currentScene->begin();
 
     return true;

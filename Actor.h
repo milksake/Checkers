@@ -25,13 +25,3 @@ public:
 	// Inherited via Actor
 	virtual void update() override;
 };
-
-class AI :
-	public Actor
-{
-public:
-	AI(bool color);
-
-	// Inherited via Actor
-	virtual void update() override;
-};
